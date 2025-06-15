@@ -43,21 +43,36 @@ module uart_tx #(
           end
         end
 
-        START, DATA, STOP: begin
-          if (clk_cnt < BAUD_DIV - 1) begin
+        START: begin
+          tx <= 1'b0; 
+          if (clk_cnt < BAUD_DIV - 1)
             clk_cnt <= clk_cnt + 1;
-          end else begin
+          else begin
             clk_cnt <= 0;
-            tx <= tx_shift[0];
-            tx_shift <= {1'b1, tx_shift[9:1]};  
-            bit_cnt <= bit_cnt + 1;
+            state <= DATA;
+          end
+        end
 
-            if (bit_cnt == 9) begin
-              state <= IDLE;
-              tx_busy <= 1'b0;
-            end else begin
-              state <= DATA;
-            end
+        DATA: begin
+          tx <= data_buf[bit_cnt];
+          if (clk_cnt < BAUD_DIV - 1)
+            clk_cnt <= clk_cnt + 1;
+          else begin
+            clk_cnt <= 0;
+            bit_cnt <= bit_cnt + 1;
+            if (bit_cnt == 7)
+              state <= STOP;
+          end
+        end
+
+        STOP: begin
+          tx <= 1'b1;
+          if (clk_cnt < BAUD_DIV - 1)
+            clk_cnt <= clk_cnt + 1;
+          else begin
+            clk_cnt <= 0;
+            state <= IDLE;
+            tx_busy <= 1'b0;
           end
         end
       endcase
