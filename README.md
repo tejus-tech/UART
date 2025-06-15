@@ -44,7 +44,7 @@ This project implements a Universal Asynchronous Receiver Transmitter (UART) in 
 
 ## Sample Waveforms
 
-![UART Waveform](https://github.com/user-attachments/assets/sample_uart_waveform.png)
+![image](https://github.com/user-attachments/assets/85af9364-b558-448f-8b9a-fe582026ffa3)
 
 ---
 
